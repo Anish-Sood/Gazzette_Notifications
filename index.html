@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications Tool</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>E-Gazzette Notifications</h1>
+        <form id="departmentForm">
+            <div class="form-group">
+                <label for="departmentName">Department Name:</label>
+                <select id="departmentName" name="departmentName" required>
+                    <option value="">-- Select Department --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="GazetteType">Gazette Type:</label>
+                <select id="GazetteType" name="GazetteType" >
+                    <option value="">-- Select Gazette Type --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="GazetteCategory">Gazette Category:</label>
+                <select id="GazetteCategory" name="GazetteCategory" >
+                    <option value="">-- Select Gazette Category --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" name="startDate" >
+            </div>
+
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" name="endDate" >
+            </div>
+
+            <button type="submit" class="btn-submit">Submit</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="logic.js"></script>
+</body>
+</html>
