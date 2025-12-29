@@ -12,10 +12,11 @@
 <body>
     <div class="container">
         <h1>E-Gazzette Notifications</h1>
+        <a href="https://dsa.punjab.gov.in/EGazette/finalreport" class="official-link" target="_blank">Official Website</a>
         <form id="departmentForm">
             <div class="form-group">
                 <label for="departmentName">Department Name:</label>
-                <select id="departmentName" name="departmentName" required>
+                <select id="departmentName" name="departmentName" >
                     <option value="">-- Select Department --</option>
                 </select>
             </div>
@@ -45,6 +46,8 @@
             <button type="submit" class="btn-submit">Submit</button>
         </form>
     </div>
+    <!-- <button type="button" id="syncButton" class="btn-submit" style="margin-top: 10px; background-color: #28a745;">Fetch & Store to Supabase</button>
+     -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="logic.js"></script>
 </body>

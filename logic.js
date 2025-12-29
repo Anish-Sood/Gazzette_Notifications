@@ -6,6 +6,7 @@ const departmentName=document.getElementById('departmentName')
 const gazetteType=document.getElementById('GazetteType')
 const gazetteCategory=document.getElementById('GazetteCategory')
 const departmentForm=document.getElementById('departmentForm')
+// const syncButton = document.getElementById('syncButton');
 
 
 document.addEventListener('DOMContentLoaded', (e)=>{
@@ -171,11 +172,14 @@ async function fetchnotifications(){
     const deptId=departmentName.value;
     const gazetteTypeid=gazetteType.value;
     const gazetteCategoryid=gazetteCategory.value;
-    const startDate = document.getElementById('startDate').value;
+    let startDate = document.getElementById('startDate').value;
     let endDate = document.getElementById('endDate').value;
 
     if(!endDate){
         endDate=new Date().toISOString().substring(0,10)
+    }
+    if(!startDate){
+        startDate="01-01-2020"
     }
 
     try{
@@ -199,6 +203,7 @@ async function fetchnotifications(){
         notificationData = result.data.map(notification => ({
             id: notification.Request_Id,
             gazette_date: notification.Gazette_Date.substring(0, 10).replace(/\//g,'_'),
+            noti_date: notification.Notification_Date.substring(0, 10).replace(/\//g,'_'),
             title: notification.Notification_Title.substring(0, 80)
         }));
     }
@@ -207,6 +212,15 @@ async function fetchnotifications(){
     } catch (error) {
         console.log(`error: `,error)
     }
+}
+
+function sanitizeFilename(filename) {
+    // Remove or replace invalid Windows filename characters
+    return filename
+        .replace(/[<>:"|?*\/\\]/g, '_')  // Replace invalid characters with underscore
+        .replace(/\s+/g, '_')             // Replace spaces with underscore
+        .replace(/_+/g, '_')              // Replace multiple underscores with single
+        .substring(0, 200);               // Limit filename length
 }
 
 function downloadnotifications(){
@@ -243,7 +257,12 @@ function downloadnotifications(){
                 // bytes array:  [65, 66, 67]      
                 // file to zip
                 // console.log(`${notification.gazette_date}`)
-                const filename = `${notification.gazette_date}_${notification.title}_${notification.id}.pdf`;
+                
+                let effective_date=notification.gazette_date;
+                if(effective_date===""){
+                    effective_date=notification.noti_date
+                }
+                const filename = sanitizeFilename(`${effective_date}_${notification.title}_${notification.id}.pdf`);
                 zip.file(filename, bytes);
                 downloadCount++;
                     
