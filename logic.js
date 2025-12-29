@@ -232,42 +232,45 @@ function downloadnotifications(){
     newbutton.addEventListener('click',async (e)=>{
         const zip = new JSZip();
         let downloadCount=0;
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         for(const notification of notificationData){
-            const response=await fetch("https://dsa.punjab.gov.in/egazette/api/Final/Output_Copy",{
-                method:'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "Request_Id": `${notification.id}`
+            try {
+                const response=await fetch("https://dsa.punjab.gov.in/egazette/api/Final/Output_Copy",{
+                    method:'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        "Request_Id": `${notification.id}`
+                    })
                 })
-            })
-            console.log(notification.id)
-            const result=await response.json();
-            if(result.response === 1 && result.data && result.data[0].Output_File){
-                const base64Data = result.data[0].Output_File;
-                const binaryString = atob(base64Data);
-                const bytes = new Uint8Array(binaryString.length);
-                    
-                for(let i = 0; i < binaryString.length; i++){
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                // binarystring= "ABC"
-                // charCodeAt:   65, 66, 67
-                // bytes array:  [65, 66, 67]      
-                // file to zip
-                // console.log(`${notification.gazette_date}`)
                 
-                let effective_date=notification.gazette_date;
-                if(effective_date===""){
-                    effective_date=notification.noti_date
-                }
-                const filename = sanitizeFilename(`${effective_date}_${notification.title}_${notification.id}.pdf`);
-                zip.file(filename, bytes);
-                downloadCount++;
+                const result=await response.json();
+                if(result.response === 1 && result.data && result.data[0].Output_File){
+                    const base64Data = result.data[0].Output_File;
+                    const binaryString = atob(base64Data);
+                    const bytes = new Uint8Array(binaryString.length);
+                        
+                    for(let i = 0; i < binaryString.length; i++){
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
                     
-                console.log(`added: ${filename}`);
+                    let effective_date=notification.gazette_date;
+                    if(effective_date===""){
+                        effective_date=notification.noti_date
+                    }
+                    const filename = sanitizeFilename(`${effective_date}_${notification.title}_${notification.id}.pdf`);
+                    zip.file(filename, bytes);
+                    downloadCount++;
+                        
+                    console.log(`Added: ${filename}`);
+                } else {
+                    console.warn(`No file data for ID ${notification.id}_${notification.noti_date}. Response:`, result);
+                }
+            } catch (error) {
+                console.error(`Failed to fetch ID ${notification.id}:`, error);
             }
+            await sleep(50);
         }
         if(downloadCount > 0){
             zip.generateAsync({type: 'blob'}).then((blob)=>{
@@ -277,6 +280,11 @@ function downloadnotifications(){
                 link.download = `notifications_${new Date().toLocaleTimeString()}.zip`;
                 link.click();
                 URL.revokeObjectURL(url);
+                // binarystring= "ABC"
+                // charCodeAt:   65, 66, 67
+                // bytes array:  [65, 66, 67]      
+                // file to zip
+                // console.log(`${notification.gazette_date}`)
             });
         } else {
             alert('No PDFs downloaded');
